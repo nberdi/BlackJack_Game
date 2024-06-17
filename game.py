@@ -1,6 +1,7 @@
 from game_settings import *
 from sys import exit
 from button import Button
+from text import Text
 
 
 class Game:
@@ -29,15 +30,31 @@ class Game:
         # show game
         self.show_elements = True
 
+        # game title on the screen
+        self.display_game_title = Text(text="BlackJack")
+
+        # game icon on the screen
+        self.display_game_icon = pygame.transform.scale(self.game_icon, (200, 150))
+        self.icon_rect = self.display_game_icon.get_rect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
     def run(self):
         while True:
             # display game desk
             self.window.blit(self.bg_image, (0, 0))
 
             if self.show_elements:
-                if self.start_button.run():     # display start btn img
+
+                # display title of the game
+                self.window.blit(self.display_game_title.surface, self.display_game_title.rect)
+
+                # display icon of the game
+                self.window.blit(self.display_game_icon, self.icon_rect)
+
+                # display start btn img
+                if self.start_button.run():
                     print('Game Start')
 
+                # display quit btn img
                 if self.quit_button.run():
                     print('Game Over')
                     break
