@@ -2,11 +2,14 @@ from game_settings import *
 
 
 class Button:
-    def __init__(self, button, btn_size, btn_rect):
+    def __init__(self, button, btn_size, btn_rect=(0, 0)):
         self.button = pygame.transform.scale(button, btn_size)  # btn img
         self.rect = self.button.get_rect(bottomleft=btn_rect)
         self.surface = pygame.display.get_surface()     # surface for button display
         self.clicked = False
+
+    def set_position(self, position, attr):
+        setattr(self.rect, attr, position)
 
     def run(self):
         action = False
