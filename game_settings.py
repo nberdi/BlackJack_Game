@@ -19,5 +19,4 @@ START_BUTTON = pygame.image.load('imgs/start_button.png')
 QUIT_BUTTON = pygame.image.load('imgs/quit_button.png')
 
 # alert size
-ALERT_WIDTH = 500
-ALERT_HEIGHT = 300
+ALERT_WIDTH, ALERT_HEIGHT = 600, 550
