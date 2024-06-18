@@ -3,6 +3,7 @@ pygame.init()
 
 # game window
 WINDOW_WIDTH, WINDOW_HEIGHT = 1000, 600
+
 # game title
 GAME_TITLE = "BlackJack"
 
@@ -20,3 +21,6 @@ QUIT_BUTTON = pygame.image.load('imgs/quit_button.png')
 
 # alert size
 ALERT_WIDTH, ALERT_HEIGHT = 600, 550
+
+# chip size
+CHIPS_WIDTH, CHIPS_HEIGHT = 410, 200
