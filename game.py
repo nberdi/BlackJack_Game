@@ -1,15 +1,18 @@
 import time
 from game_settings import *
 from sys import exit
-from button import Button
+from button import Button, BetButton, HitButton, StandButton
 from text import Text
 from alert import Alert
+from display_chips import Chips
+from display_cards import Cards
 
 
 class Game:
     def __init__(self):
         # size of the game
         self.window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
         # title of the game
         pygame.display.set_caption(GAME_TITLE)
 
@@ -39,10 +42,32 @@ class Game:
         self.alert = Alert()
         self.alert_start_time = None  # track when the alert starts
 
+        # chips
+        self.display_chips = Chips()
+
+        # shuffle text
+        self.shuffle_text_start_time = None     # track when the shuffle text starts
+
+        # allow to display bet text
+        self.bet_text = True
+
+        # cards
+        self.display_cards = Cards()
+
+        # button to bet
+        self.bet_button = BetButton()
+
+        # hit button
+        self.hit_button = HitButton()
+
+        # stand button
+        self.stand_button = StandButton()
+
     def run(self):
         while True:
             # display game desk
-            self.window.blit(self.bg_image, (0, 0))
+            # self.window.blit(self.bg_image, (0, 0))
+            self.window.fill('#00BF63')
 
             if self.game_menu:
 
@@ -62,12 +87,48 @@ class Game:
                     print('Game Over')
                     break
 
-                if self.alert_start_time:
-                    if time.time() - self.alert_start_time < 3:
-                        self.alert.run()
-                    else:
-                        self.alert_start_time = None
-                        self.game_menu = False
+            # display alert on the screen for 3 secs
+            if self.alert_start_time:
+                if time.time() - self.alert_start_time < 3:
+                    self.alert.run()
+                else:
+                    self.alert_start_time = None
+                    self.game_menu = False
+                    self.shuffle_text_start_time = time.time()
+
+            # display game chips on the screen
+            if not self.game_menu:
+                self.display_chips.run()  # display chips
+                if time.time() - self.shuffle_text_start_time < 3:
+                    self.display_chips.display_shuffle_text()  # displays shuffle text for 3 seconds
+                else:
+                    self.shuffle_text_start_time = 0
+
+            # the shuffle text disappears after 3 seconds, and the bet text will appear.
+            if self.shuffle_text_start_time == 0 and not self.game_menu:
+                if self.bet_text:   # displays the bet text for the user after the shuffle text disappears.
+                    self.display_chips.display_bet_text()
+                if self.bet_button.run():     # if the user clicks the bet button, the game starts.
+                    self.bet_text = False
+                    self.display_chips.allowed_bet = False
+
+            # display cards
+            if not self.display_chips.allowed_bet:
+                # user's cards
+                self.window.blit(self.display_cards.first_card.button, self.display_cards.first_card.rect)
+                self.window.blit(self.display_cards.second_card.button, self.display_cards.second_card.rect)
+                self.window.blit(self.display_cards.calculate_user_score(), (30, 250))
+
+                # dealer's cards
+                self.window.blit(self.display_cards.dealer_first_card.button, self.display_cards.dealer_first_card.rect)
+                self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
+                self.window.blit(self.display_cards.calculate_dealer_score(), (550, 120))
+
+                if self.hit_button.run():
+                    pass
+
+                if self.stand_button.run():
+                    pass
 
             pygame.display.update()
 
