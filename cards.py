@@ -45,17 +45,17 @@ for filename in os.listdir('imgs/game_cards'):
         king.append(pygame.image.load(f"imgs/game_cards/{filename}"))
 
 all_cards: list[dict] = [
-    {'ace': ace},
-    {'two': two},
-    {'three': three},
-    {'four': four},
-    {'five': five},
-    {'six': six},
-    {'seven': seven},
-    {'eight': eight},
-    {'nine': nine},
-    {'ten': ten},
-    {'jack': jack},
-    {'queen': queen},
-    {'king': king}
+    {'ace': ace, 'value': 1},
+    {'two': two, 'value': 2},
+    {'three': three, 'value': 3},
+    {'four': four, 'value': 4},
+    {'five': five, 'value': 5},
+    {'six': six, 'value': 6},
+    {'seven': seven, 'value': 7},
+    {'eight': eight, 'value': 8},
+    {'nine': nine, 'value': 9},
+    {'ten': ten, 'value': 10},
+    {'jack': jack, 'value': 10},
+    {'queen': queen, 'value': 10},
+    {'king': king, 'value': 10}
 ]
