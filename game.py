@@ -114,15 +114,10 @@ class Game:
 
             # display cards
             if not self.display_chips.allowed_bet:
-                # user's cards
-                self.window.blit(self.display_cards.first_card.button, self.display_cards.first_card.rect)
-                self.window.blit(self.display_cards.second_card.button, self.display_cards.second_card.rect)
-                self.window.blit(self.display_cards.calculate_user_score(), (30, 250))
+                # self.window.blit(self.display_cards.calculate_dealer_score(), (550, 120))
 
-                # dealer's cards
-                self.window.blit(self.display_cards.dealer_first_card.button, self.display_cards.dealer_first_card.rect)
-                self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
-                self.window.blit(self.display_cards.calculate_dealer_score(), (550, 120))
+                #############################
+                self.display_cards.run()
 
                 if self.hit_button.run():
                     pass
