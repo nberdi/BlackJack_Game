@@ -7,56 +7,21 @@ from text import Text
 
 class Cards:
     def __init__(self):
-        self.surface = pygame.surface.Surface((400, 400))
-        self.rect = self.surface.get_rect(center=(200, 200))
-        self.display_surface = pygame.display.get_surface()
-
-        self.user_two_cards = []
-        self.dealer_two_cards = []
-
-        self.user_cards = None
-        self.user_current_score = None
-        self.user_first_card = None
-        self.user_second_card = None
-
-        self.dealer_cards = None
-        self.dealer_current_score = None
-        self.dealer_first_card = None
-        self.dealer_second_card = None
-
-    def run(self):
         # get random two cards from a dict of the list; check if there is an ace
-        self.user_cards = self.is_eleven(self.random_cards(all_cards, self.user_two_cards))
-
+        self.user_cards = self.is_eleven(self.random_cards(all_cards))
         # count user total score
         self.user_current_score = self.sum_card_values(self.user_cards)
-
         # load user card imgs
         self.user_first_card = Button(button=self.user_cards[0], btn_size=(130, 130), btn_rect=(20, 450))
         self.user_second_card = Button(button=self.user_cards[2], btn_size=(130, 130), btn_rect=(170, 450))
 
-        # to display user cards on the screen
-        self.display_surface.blit(self.user_first_card.button, self.user_first_card.rect)
-        self.display_surface.blit(self.user_second_card.button, self.user_second_card.rect)
-
-        # display user score on the screen
-        self.display_surface.blit(self.display_user_score(self.user_current_score), (30, 250))
-        if self.user_current_score == 21:
-            print("You win with a 'Blackjack'")
-
         # get random two cards from a dict of the list; check if there is an ace
-        self.dealer_cards = self.is_eleven(self.random_cards(all_cards, self.dealer_two_cards))
+        self.dealer_cards = self.is_eleven(self.random_cards(all_cards))
         # count dealer total score
-        self.dealer_current_score = self.sum_card_values(self.user_cards)
+        self.dealer_current_score = self.sum_card_values(self.dealer_cards)
         # load dealer card imgs
         self.dealer_first_card = Button(button=self.dealer_cards[0], btn_size=(130, 130), btn_rect=(550, 300))
-        # self.dealer_second_card = Button(button=self.dealer_cards[1], btn_size=(130, 130), btn_rect=(700, 300))
-
-        # to display dealer cards on the screen
-        self.display_surface.blit(self.dealer_first_card.button, self.dealer_first_card.rect)
-
-        # display dealer score on the screen
-        self.display_surface.blit(self.display_dealer_score(self.dealer_current_score), (550, 120))
+        self.dealer_second_card = Button(button=self.dealer_cards[2], btn_size=(130, 130), btn_rect=(700, 300))
 
     def display_user_score(self, user_score):
         display_user_score = Text(text=f"Your score is: {user_score}", color=(0, 0, 0), size=35)
@@ -66,7 +31,7 @@ class Cards:
         display_dealer_score = Text(text=f"Dealer's score is: {dealer_score}", color=(0, 0, 0), size=35)
         return display_dealer_score.surface
 
-    def random_cards(self, all_cards, two_cards):
+    def random_cards(self, all_cards):
         first_type_of_card = random.choice(all_cards)
         second_type_of_card = random.choice(all_cards)
 
