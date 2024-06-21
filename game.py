@@ -19,9 +19,6 @@ class Game:
         # icon of the game
         pygame.display.set_icon(GAME_ICON)
 
-        # background image
-        self.bg_image = pygame.transform.scale(BG_IMAGE, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
         # button to start the game
         self.start_button = Button(button=START_BUTTON, btn_size=(300, 300), btn_rect=(200, 670))
 
@@ -66,12 +63,88 @@ class Game:
         # allow result text
         self.result_text = False
 
+        # allow take another card
+        self.take_another_card = False
+        self.another_card = None
+        self.new_btn_list = []
+
+        # index for hit function
+        self.n = 0
+
+    def hit(self):
+        new_card: list = self.display_cards.random_card()
+        if 1 in new_card and self.display_cards.user_current_score + 11 <= 21:
+            index = new_card.index(1)
+            new_card[index] = 11
+        self.display_cards.user_cards += new_card
+        self.display_cards.user_current_score = self.display_cards.sum_card_values(self.display_cards.user_cards)
+        return new_card
+
+    def result(self):
+        self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
+            self.display_cards.dealer_cards)
+        if self.display_cards.user_current_score < self.display_cards.dealer_current_score:
+            self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
+            self.display_chips.user_bet = 0
+            self.display_cards.display_dealer_win()
+        elif self.display_cards.user_current_score > self.display_cards.dealer_current_score:
+            self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
+            win = self.display_chips.user_bet * 2
+            self.display_chips.user_balance += win
+            self.display_chips.user_bet = 0
+            self.display_cards.display_user_win()
+        elif self.display_cards.user_current_score == self.display_cards.dealer_current_score:
+            self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
+            self.display_chips.user_balance += self.display_chips.user_bet
+            self.display_chips.user_bet = 0
+            self.display_cards.display_draw()
+
+    def is_twenty_one(self):
+        self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
+            self.display_cards.dealer_cards)
+        self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
+        self.display_chips.user_bet = 0
+        self.display_cards.display_dealer_win()
+
+    def btn_checker(self):
+        # blackjack win
+        if self.display_cards.user_current_score == 21:
+            win = self.display_chips.user_bet * 2
+            self.display_chips.user_balance += win
+            self.display_chips.user_bet = 0
+            self.window.blit(self.display_cards.blackjack_win.surface, self.display_cards.blackjack_win.rect)
+        else:
+
+            if self.hit_button.run():
+                self.take_another_card = True
+
+            if self.take_another_card:
+                new_card = self.hit()
+                for card in new_card:
+                    if not isinstance(card, int):
+                        self.n += 1
+                        self.another_card = Button(button=card, btn_size=(130, 130), btn_rect=(290 + self.n * 30, 450))
+                        self.new_btn_list.append(self.another_card)
+                if self.display_cards.user_current_score > 21:
+                    self.is_twenty_one()
+            self.take_another_card = False
+
+            if not None in self.new_btn_list:
+                for new in self.new_btn_list:
+                    self.window.blit(new.button, new.rect)
+
+            if self.stand_button.run():
+                self.result_text = True
+            if self.result_text:
+                if self.display_cards.user_current_score > 21:
+                    self.is_twenty_one()
+                else:
+                    self.result()
 
     def run(self):
         work = True
         while work:
             # display game desk
-            # self.window.blit(self.bg_image, (0, 0))
             self.window.fill('#006a42')
 
             if self.game_menu:
@@ -124,43 +197,17 @@ class Game:
                 self.window.blit(self.display_cards.user_second_card.button, self.display_cards.user_second_card.rect)
 
                 # to display user score on the screen
-                self.window.blit(self.display_cards.display_user_score(self.display_cards.user_current_score), (30, 250))
-                if self.display_cards.user_current_score == 21:
-                    win = self.display_chips.user_bet * 2
-                    self.display_chips.user_balance += win
-                    self.display_chips.user_bet = 0
-                    self.window.blit(self.display_cards.blackjack_win.surface, self.display_cards.blackjack_win.rect)
+                self.window.blit(self.display_cards.display_user_score(
+                    self.display_cards.user_current_score), (30, 250))
 
                 # to display dealer card on the screen
                 self.window.blit(self.display_cards.dealer_first_card.button, self.display_cards.dealer_first_card.rect)
 
                 # to display dealer score on the screen
-                self.window.blit(self.display_cards.display_dealer_score(self.display_cards.dealer_current_score), (550, 120))
+                self.window.blit(self.display_cards.display_dealer_score(
+                    self.display_cards.dealer_current_score), (550, 120))
 
-                if self.hit_button.run():
-                    pass
-
-                if self.stand_button.run():
-                    self.result_text = True
-
-                if self.result_text:
-                    self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
-                        self.display_cards.dealer_cards)
-                    if self.display_cards.user_current_score < self.display_cards.dealer_current_score:
-                        self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
-                        self.display_chips.user_bet = 0
-                        self.display_cards.display_dealer_win()
-                    elif self.display_cards.user_current_score > self.display_cards.dealer_current_score:
-                        self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
-                        win = self.display_chips.user_bet * 2
-                        self.display_chips.user_balance += win
-                        self.display_chips.user_bet = 0
-                        self.display_cards.display_user_win()
-                    elif self.display_cards.user_current_score == self.display_cards.dealer_current_score:
-                        self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
-                        self.display_chips.user_balance += self.display_chips.user_bet
-                        self.display_chips.user_bet = 0
-                        self.display_cards.display_draw()
+                self.btn_checker()
 
             pygame.display.update()
 
