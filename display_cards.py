@@ -12,7 +12,7 @@ class Cards:
         self.display_surface = pygame.display.get_surface()
 
         # get random two cards from a dict of the list; check if there is an ace
-        self.user_cards = self.is_eleven(self.random_cards(all_cards))
+        self.user_cards = self.is_eleven(self.random_card() + self.random_card())
         # count user total score
         self.user_current_score = self.sum_card_values(self.user_cards)
         # load user card imgs
@@ -20,7 +20,7 @@ class Cards:
         self.user_second_card = Button(button=self.user_cards[2], btn_size=(130, 130), btn_rect=(170, 450))
 
         # get random two cards from a dict of the list; check if there is an ace
-        self.dealer_cards = self.is_eleven(self.random_cards(all_cards))
+        self.dealer_cards = self.is_eleven(self.random_card() + self.random_card())
         # count dealer total score
         self.dealer_current_score = self.dealer_cards[1]
         # load dealer card imgs
@@ -41,32 +41,21 @@ class Cards:
         display_dealer_score = Text(text=f"Dealer's score is: {dealer_score}", color=(0, 0, 0), size=35)
         return display_dealer_score.surface
 
-    def random_cards(self, all_cards):
-        first_type_of_card = random.choice(all_cards)
-        second_type_of_card = random.choice(all_cards)
-
-        # user key of the dict
-        f_card_key = ''.join(list(first_type_of_card)[0])
-        s_card_key = ''.join(list(second_type_of_card)[0])
-
-        # user random card img
-        first_card_img = random.choice(first_type_of_card[f_card_key])
-        second_card_img = random.choice(second_type_of_card[s_card_key])
-
-        # value key
-        first_card_value_key = ''.join(list(first_type_of_card)[1])
-        second_card_value_key = ''.join(list(second_type_of_card)[1])
-
-        # get value
-        first_card_value = first_type_of_card[first_card_value_key]
-        second_card_value = second_type_of_card[second_card_value_key]
-
-        two_cards = [first_card_img, first_card_value, second_card_img, second_card_value]
-        return two_cards
+    def random_card(self):
+        random_card_dict = random.choice(all_cards)
+        random_card_dict_key = ''.join(list(random_card_dict)[0])
+        random_card_img = random.choice(random_card_dict[random_card_dict_key])
+        random_card_value_key = ''.join(list(random_card_dict)[1])
+        random_card_value = random_card_dict[random_card_value_key]
+        return [random_card_img, random_card_value]
 
     def is_eleven(self, adjusted_cards: list):
+        x = []
         if 1 in adjusted_cards:
-            if adjusted_cards[1] + adjusted_cards[3] < 21:
+            for i in adjusted_cards:
+                if isinstance(i, int):
+                    x.append(i)
+            if sum(x) < 21:
                 index = adjusted_cards.index(1)
                 adjusted_cards[index] = 11
         return adjusted_cards
