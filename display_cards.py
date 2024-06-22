@@ -15,6 +15,7 @@ class Cards:
         self.user_cards = self.is_eleven(self.random_card() + self.random_card())
         # count user total score
         self.user_current_score = self.sum_card_values(self.user_cards)
+        self.blackjack_checked = self.user_current_score
         # load user card imgs
         self.user_first_card = Button(button=self.user_cards[0], btn_size=(130, 130), btn_rect=(20, 450))
         self.user_second_card = Button(button=self.user_cards[2], btn_size=(130, 130), btn_rect=(170, 450))
@@ -22,10 +23,15 @@ class Cards:
         # get random two cards from a dict of the list; check if there is an ace
         self.dealer_cards = self.is_eleven(self.random_card() + self.random_card())
         # count dealer total score
-        self.dealer_current_score = self.dealer_cards[1]
+        self.dealer_current_score = self.sum_card_values(self.dealer_cards)
+        # display dealer's first card
+        self.dealer_first_card_score = self.dealer_cards[1]
+        self.allow_first_card = True
+        # if dealer's hand less than 17
+        self.dealer_new_card = []
         # load dealer card imgs
-        self.dealer_first_card = Button(button=self.dealer_cards[0], btn_size=(130, 130), btn_rect=(550, 300))
-        self.dealer_second_card = Button(button=self.dealer_cards[2], btn_size=(130, 130), btn_rect=(700, 300))
+        self.dealer_first_card = Button(button=self.dealer_cards[0], btn_size=(130, 130), btn_rect=(400, 300))
+        self.dealer_second_card = Button(button=self.dealer_cards[2], btn_size=(130, 130), btn_rect=(550, 300))
 
         # results
         self.blackjack_win = Text(text="You win with a 'Blackjack'", size=60, pos=(400, 70))
