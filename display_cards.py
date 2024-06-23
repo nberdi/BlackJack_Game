@@ -30,8 +30,8 @@ class Cards:
         # if dealer's hand less than 17
         self.dealer_new_card = []
         # load dealer card imgs
-        self.dealer_first_card = Button(button=self.dealer_cards[0], btn_size=(130, 130), btn_rect=(400, 300))
-        self.dealer_second_card = Button(button=self.dealer_cards[2], btn_size=(130, 130), btn_rect=(550, 300))
+        self.dealer_first_card = Button(button=self.dealer_cards[0], btn_size=(130, 130), btn_rect=(250, 300))
+        self.dealer_second_card = Button(button=self.dealer_cards[2], btn_size=(130, 130), btn_rect=(400, 300))
 
         # results
         self.blackjack_win = Text(text="You win with a 'Blackjack'", size=60, pos=(400, 70))
