@@ -1,7 +1,7 @@
 import time
 from game_settings import *
 from sys import exit
-from button import Button, BetButton, HitButton, StandButton
+from button import Button, BetButton, HitButton, StandButton, NewGameButton
 from text import Text
 from alert import Alert
 from display_chips import Chips
@@ -53,6 +53,8 @@ class Game:
 
         # button to bet
         self.bet_button = BetButton()
+        # allow to display bet btn
+        self.allow_bet_button = True
 
         # hit button
         self.hit_button = HitButton()
@@ -77,6 +79,15 @@ class Game:
 
         # allow click hit and stand btns
         self.allow_hit = True
+        self.allow_stand = True
+
+        # new game btn
+        self.new_game_button = NewGameButton()
+
+        # allow to display new game btn
+        self.allow_new_game = False
+
+        self.game = True
 
     def blackjack_checker(self):
         # blackjack win
@@ -85,6 +96,10 @@ class Game:
             self.display_chips.user_balance += win
             self.display_chips.user_bet = 0
             self.window.blit(self.display_cards.blackjack_win.surface, self.display_cards.blackjack_win.rect)
+            self.allow_hit = False
+            self.allow_stand = False
+            self.allow_bet_button = False
+            self.allow_new_game = True
 
     def hit(self):
         new_card: list = self.display_cards.random_card()
@@ -97,21 +112,24 @@ class Game:
 
     def stand_btn(self):
         if self.stand_button.run():
-            self.allow_result = True
+            if self.allow_stand:
+                self.allow_result = True
             self.allow_hit = False
+            self.allow_bet_button = False
+            self.allow_new_game = True
 
         if self.allow_result:
 
             if self.display_cards.user_current_score > 21:
                 self.user_hand_is_more()
             else:
-                if self.display_cards.dealer_current_score <= 17:
+                if self.display_cards.dealer_current_score < 17:
                     new_card = self.dealer_hand_less()
                     for card in new_card:
                         if not isinstance(card, int):
                             self.dealer_card_rect += 150
                             self.dealer_another_card = Button(button=card, btn_size=(130, 130),
-                                                              btn_rect=(550 + self.dealer_card_rect, 300))
+                                                              btn_rect=(400 + self.dealer_card_rect, 300))
                             self.dealer_new_card_list.append(self.dealer_another_card)
                     self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
                         self.display_cards.dealer_cards)
@@ -157,6 +175,9 @@ class Game:
 
     def user_hand_is_more(self):
         self.allow_hit = False
+        self.allow_stand = False
+        self.allow_bet_button = False
+        self.allow_new_game = True
         self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
             self.display_cards.dealer_cards)
         self.display_cards.allow_first_card = False
@@ -221,23 +242,24 @@ class Game:
                     self.game_menu = False
                     self.shuffle_text_start_time = time.time()
 
-            game = True
-            if game:
-                # display game chips on the screen
-                if not self.game_menu:
-                    self.display_chips.run()  # display chips
-                    if time.time() - self.shuffle_text_start_time < 3:
-                        self.display_chips.display_shuffle_text()  # displays shuffle text for 3 seconds
-                    else:
-                        self.shuffle_text_start_time = 0
+            # display game chips on the screen
+            if not self.game_menu:
+                self.display_chips.run()  # display chips
+                if time.time() - self.shuffle_text_start_time < 3:
+                    self.display_chips.display_shuffle_text()  # displays shuffle text for 3 seconds
+                else:
+                    self.shuffle_text_start_time = 0
+
+            if self.game:
 
                 # the shuffle text disappears after 3 seconds, and the bet text will appear.
                 if self.shuffle_text_start_time == 0 and not self.game_menu:
                     if self.bet_text:   # displays the bet text for the user after the shuffle text disappears.
                         self.display_chips.display_bet_text()
-                    if self.bet_button.run():     # if the user clicks the bet button, the game starts.
-                        self.bet_text = False
-                        self.display_chips.allowed_bet = False
+                    if self.allow_bet_button:
+                        if self.bet_button.run():     # if the user clicks the bet button, the game starts.
+                            self.bet_text = False
+                            self.display_chips.allowed_bet = False
 
                 # display cards
                 if not self.display_chips.allowed_bet:
@@ -260,13 +282,17 @@ class Game:
                     # to display dealer score on the screen
                     if self.display_cards.allow_first_card:
                         self.window.blit(self.display_cards.display_dealer_score(
-                            self.display_cards.dealer_first_card_score), (400, 120))
+                            self.display_cards.dealer_first_card_score), (250, 120))
                     else:
                         self.window.blit(self.display_cards.display_dealer_score(
                             self.display_cards.dealer_current_score), (400, 120))
 
                     self.hit_btn()
                     self.stand_btn()
+
+                    if self.allow_new_game:
+                        if self.new_game_button.run():
+                            pass
 
             pygame.display.update()
 
