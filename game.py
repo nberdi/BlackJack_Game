@@ -112,11 +112,11 @@ class Game:
         return new_card
 
     def stand_btn(self):
-        if self.stand_button.run():
-            if self.allow_stand:
+        if self.allow_stand:
+            if self.stand_button.run():
                 self.allow_result = True
-            self.allow_hit = False
-            self.allow_new_game = True
+                self.allow_hit = False
+                self.allow_new_game = True
 
         if self.allow_result:
 
@@ -142,10 +142,11 @@ class Game:
                 self.dealer_hand_is_more()
             else:
                 self.result()
+                self.allow_stand = False
 
     def hit_btn(self):
-        if self.hit_button.run():
-            if self.allow_hit:
+        if self.allow_hit:
+            if self.hit_button.run():
                 self.take_another_card = True
 
         if self.take_another_card:
@@ -234,6 +235,9 @@ class Game:
             # to display dealer card on the screen
             self.window.blit(self.display_cards.dealer_first_card.button,
                              self.display_cards.dealer_first_card.rect)
+            # to display dealer card on the screen
+            self.window.blit(self.display_cards.hidden_card.button,
+                             self.display_cards.hidden_card.rect)
 
             # to display dealer score on the screen
             if self.display_cards.allow_first_card:
