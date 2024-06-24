@@ -31,7 +31,7 @@ class Button:
 class BetButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/bet_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(720, 680))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(780, 680))
 
 
 class HitButton(Button):
@@ -49,4 +49,4 @@ class StandButton(Button):
 class NewGameButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/new_game_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(720, 680))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(600, 680))
