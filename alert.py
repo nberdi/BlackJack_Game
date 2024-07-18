@@ -15,7 +15,7 @@ class Alert:
 
         # display 500 chip img
         self.chip = Button(button=chips_dict['500'], btn_size=(200, 200))
-        self.chip.set_position((410, 200), 'center')
+        self.chip.set_position((510, 200), 'center')
 
         # display user balance
         self.balance_text = Text(text="$2500", color=(255, 255, 255), size=90, pos=(WINDOW_WIDTH / 2, 500))
