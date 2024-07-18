@@ -54,5 +54,5 @@ class NewGameButton(Button):
 
 class MenuButton(Button):
     def __init__(self):
-        button = pygame.image.load('imgs/exit.png')
+        button = pygame.image.load('imgs/menu.png')
         super().__init__(button=button, btn_size=(50, 50), btn_rect=(20, 60))
