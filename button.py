@@ -31,22 +31,28 @@ class Button:
 class BetButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/bet_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(780, 680))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(920, 680))
 
 
 class HitButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/hit_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(600, 200))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(700, 200))
 
 
 class StandButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/stand_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(800, 200))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(920, 200))
 
 
 class NewGameButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/new_game_button.png')
-        super().__init__(button=button, btn_size=(300, 300), btn_rect=(600, 680))
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(700, 680))
+
+
+class MenuButton(Button):
+    def __init__(self):
+        button = pygame.image.load('imgs/exit.png')
+        super().__init__(button=button, btn_size=(50, 50), btn_rect=(20, 60))
