@@ -39,7 +39,7 @@ class Chips:
 
         self.display_surface.blit(self.calculate_user_balance(), (560, 510))
 
-        self.display_surface.blit(self.calculate_user_bet(), (70, 50))
+        self.display_surface.blit(self.calculate_user_bet(), (60, 120))
 
         # user can bet by clicking chip buttons
         if self.allowed_bet:
