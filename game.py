@@ -1,7 +1,7 @@
 import time
 from game_settings import *
 from sys import exit
-from button import Button, BetButton, HitButton, StandButton, NewGameButton
+from button import Button, BetButton, HitButton, StandButton, NewGameButton, MenuButton
 from text import Text
 from alert import Alert
 from display_chips import Chips
@@ -20,10 +20,10 @@ class Game:
         pygame.display.set_icon(GAME_ICON)
 
         # button to start the game
-        self.start_button = Button(button=START_BUTTON, btn_size=(300, 300), btn_rect=(200, 670))
+        self.start_button = Button(button=START_BUTTON, btn_size=(300, 300), btn_rect=(300, 670))
 
         # button to exit the game
-        self.quit_button = Button(button=QUIT_BUTTON, btn_size=(300, 300), btn_rect=(500, 670))
+        self.quit_button = Button(button=QUIT_BUTTON, btn_size=(300, 300), btn_rect=(600, 670))
 
         # show game menu
         self.game_menu = True
@@ -91,6 +91,8 @@ class Game:
         # get random cards for the user and the dealer
         self.display_cards.play()
 
+        self.menu_button = MenuButton()  # menu button
+
     def blackjack_checker(self):
         # blackjack win
         if self.display_cards.blackjack_checked == 21:
@@ -108,6 +110,14 @@ class Game:
             index = new_card.index(1)
             new_card[index] = 11
         self.display_cards.user_cards += new_card
+        only_int = []
+        if 11 in self.display_cards.user_cards:
+            for i in self.display_cards.user_cards:
+                if isinstance(i, int):
+                    only_int.append(i)
+            if sum(only_int) > 21:
+                index = self.display_cards.user_cards.index(11)
+                self.display_cards.user_cards[index] = 1
         self.display_cards.user_current_score = self.display_cards.sum_card_values(self.display_cards.user_cards)
         return new_card
 
@@ -142,7 +152,7 @@ class Game:
                 self.dealer_hand_is_more()
             else:
                 self.result()
-                self.allow_stand = False
+            self.allow_stand = False
 
     def hit_btn(self):
         if self.allow_hit:
@@ -172,6 +182,14 @@ class Game:
             index = new_card.index(1)
             new_card[index] = 11
         self.display_cards.dealer_cards += new_card
+        only_int = []
+        if 11 in self.display_cards.dealer_cards:
+            for i in self.display_cards.dealer_cards:
+                if isinstance(i, int):
+                    only_int.append(i)
+            if sum(only_int) > 21:
+                index = self.display_cards.dealer_cards.index(11)
+                self.display_cards.dealer_cards[index] = 1
         return new_card
 
     def user_hand_is_more(self):
@@ -235,7 +253,7 @@ class Game:
             # to display dealer card on the screen
             self.window.blit(self.display_cards.dealer_first_card.button,
                              self.display_cards.dealer_first_card.rect)
-            # to display dealer card on the screen
+            # to display dealer hidden card on the screen
             self.window.blit(self.display_cards.hidden_card.button,
                              self.display_cards.hidden_card.rect)
 
@@ -266,6 +284,7 @@ class Game:
 
                     self.display_cards.play()
                     self.game = False
+                    self.allow_new_game = False
 
     def run(self):
         work = True
@@ -302,16 +321,35 @@ class Game:
 
             # display game chips on the screen
             if not self.game_menu:
+
+                if self.menu_button.run():
+                    self.display_chips.user_balance = 2500
+                    self.game_menu = True
+                    self.bet_text = True
+                    self.display_chips.allowed_bet = True
+                    self.display_cards.allow_first_card = True
+                    self.allow_stand = True
+                    self.allow_hit = True
+                    self.allow_result = False
+
+                    self.user_new_card_list = []
+                    self.dealer_new_card_list = []
+                    self.user_card_rect = 0
+                    self.dealer_card_rect = 0
+
+                    self.display_cards.play()
+
                 self.display_chips.run()  # display chips
                 if time.time() - self.shuffle_text_start_time < 3:
                     self.display_chips.display_shuffle_text()  # displays shuffle text for 3 seconds
                 else:
                     self.shuffle_text_start_time = 0
+                    self.game = True
 
-            if self.game:
-                self.play()
-            else:
-                self.game = True
+                if self.game:
+                    self.play()
+                else:
+                    self.game = True
 
             pygame.display.update()
 
