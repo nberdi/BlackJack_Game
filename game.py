@@ -1,7 +1,7 @@
 import time
 from game_settings import *
 from sys import exit
-from button import Button, BetButton, HitButton, StandButton, NewGameButton, MenuButton
+from button import Button, BetButton, HitButton, StandButton, NewGameButton, MenuButton, DoubleButton
 from text import Text
 from alert import Alert
 from display_chips import Chips
@@ -93,15 +93,22 @@ class Game:
 
         self.menu_button = MenuButton()  # menu button
 
+        self.double_button = DoubleButton()  # double button
+        self.allow_double = True
+        self.double = False
+        self.double_result = False
+        self.user_hand_more = False
+
     def blackjack_checker(self):
         # blackjack win
         if self.display_cards.blackjack_checked == 21:
-            win = self.display_chips.user_bet * 2
+            win = int(self.display_chips.user_bet + (self.display_chips.user_bet * 1.5))
             self.display_chips.user_balance += win
             self.display_chips.user_bet = 0
             self.window.blit(self.display_cards.blackjack_win.surface, self.display_cards.blackjack_win.rect)
             self.allow_hit = False
             self.allow_stand = False
+            self.allow_double = False
             self.allow_new_game = True
 
     def hit(self):
@@ -126,6 +133,7 @@ class Game:
             if self.stand_button.run():
                 self.allow_result = True
                 self.allow_hit = False
+                self.allow_double = False
                 self.allow_new_game = True
 
         if self.allow_result:
@@ -158,6 +166,7 @@ class Game:
         if self.allow_hit:
             if self.hit_button.run():
                 self.take_another_card = True
+                self.allow_double = False
 
         if self.take_another_card:
             new_card = self.hit()
@@ -175,6 +184,59 @@ class Game:
 
         if self.display_cards.user_current_score > 21:
             self.user_hand_is_more()
+
+    def double_btn(self):
+        if self.display_chips.user_bet > self.display_chips.user_balance:
+            self.allow_double = False
+        if self.allow_double:
+            if self.double_button.run():
+                self.double = True
+                self.double_result = True
+                self.display_chips.user_balance -= self.display_chips.user_bet
+                self.display_chips.user_bet += self.display_chips.user_bet
+
+        if self.double:
+            new_card = self.hit()
+            for card in new_card:
+                if not isinstance(card, int):
+                    self.user_another_card = Button(button=card, btn_size=(130, 130), btn_rect=(320, 450))
+                    self.user_new_card_list.append(self.user_another_card)
+
+        self.double = False
+
+        if not None in self.user_new_card_list:
+            for new in self.user_new_card_list:
+                self.window.blit(new.button, new.rect)
+
+        if not None in self.dealer_new_card_list:
+            for new in self.dealer_new_card_list:
+                self.window.blit(new.button, new.rect)
+
+        if self.double_result:
+            if self.display_cards.user_current_score > 21:
+                self.user_hand_is_more()
+                self.user_hand_more = True
+            else:
+                if self.display_cards.dealer_current_score < 17:
+                    new_card = self.dealer_hand_less()
+                    for card in new_card:
+                        if not isinstance(card, int):
+                            self.dealer_card_rect += 150
+                            self.dealer_another_card = Button(button=card, btn_size=(130, 130), btn_rect=(
+                                400 + self.dealer_card_rect, 300))
+                            self.dealer_new_card_list.append(self.dealer_another_card)
+                    self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
+                        self.display_cards.dealer_cards)
+
+            if not self.user_hand_more:
+                if self.display_cards.dealer_current_score > 21:
+                    self.dealer_hand_is_more()
+                else:
+                    self.result()
+                    self.allow_hit = False
+                    self.allow_stand = False
+                    self.allow_double = False
+                    self.allow_new_game = True
 
     def dealer_hand_less(self):
         new_card: list = self.display_cards.random_card()
@@ -195,6 +257,7 @@ class Game:
     def user_hand_is_more(self):
         self.allow_hit = False
         self.allow_stand = False
+        self.allow_double = False
         self.allow_new_game = True
         self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
             self.display_cards.dealer_cards)
@@ -204,6 +267,10 @@ class Game:
         self.display_cards.display_dealer_win()
 
     def dealer_hand_is_more(self):
+        self.allow_hit = False
+        self.allow_stand = False
+        self.allow_double = False
+        self.allow_new_game = True
         self.display_cards.allow_first_card = False
         self.window.blit(self.display_cards.dealer_second_card.button, self.display_cards.dealer_second_card.rect)
         win = self.display_chips.user_bet * 2
@@ -267,6 +334,7 @@ class Game:
 
             self.hit_btn()
             self.stand_btn()
+            self.double_btn()
 
             if self.allow_new_game:
                 if self.new_game_button.run():
@@ -275,7 +343,10 @@ class Game:
                     self.display_cards.allow_first_card = True
                     self.allow_stand = True
                     self.allow_hit = True
+                    self.allow_double = True
                     self.allow_result = False
+                    self.double_result = False
+                    self.user_hand_more = False
 
                     self.user_new_card_list = []
                     self.dealer_new_card_list = []
@@ -330,7 +401,10 @@ class Game:
                     self.display_cards.allow_first_card = True
                     self.allow_stand = True
                     self.allow_hit = True
+                    self.allow_double = True
                     self.allow_result = False
+                    self.double_result = False
+                    self.user_hand_more = False
 
                     self.user_new_card_list = []
                     self.dealer_new_card_list = []
