@@ -56,3 +56,9 @@ class MenuButton(Button):
     def __init__(self):
         button = pygame.image.load('imgs/menu.png')
         super().__init__(button=button, btn_size=(50, 50), btn_rect=(20, 60))
+
+
+class DoubleButton(Button):
+    def __init__(self):
+        button = pygame.image.load('imgs/double_button.png')
+        super().__init__(button=button, btn_size=(300, 300), btn_rect=(480, 200))
