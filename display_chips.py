@@ -44,22 +44,18 @@ class Chips:
         # user can bet by clicking chip buttons
         if self.allowed_bet:
             if self.twenty_five.run():
-                print('25')
                 if self.user_balance >= 25:
                     self.user_balance -= 25
                     self.user_bet += 25
             elif self.fifty.run():
-                print('50')
                 if self.user_balance >= 50:
                     self.user_balance -= 50
                     self.user_bet += 50
             elif self.hundred.run():
-                print('100')
                 if self.user_balance >= 100:
                     self.user_balance -= 100
                     self.user_bet += 100
             elif self.five_hundred.run():
-                print('500')
                 if self.user_balance >= 500:
                     self.user_balance -= 500
                     self.user_bet += 500
