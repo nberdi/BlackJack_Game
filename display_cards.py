@@ -29,7 +29,7 @@ class Cards:
         self.blackjack_win = Text(text="You win with a 'Blackjack'", size=60, pos=(WINDOW_WIDTH / 2, 70))
         self.user_win = Text(text="You Win!", size=60, pos=(WINDOW_WIDTH / 2, 70))
         self.dealer_win = Text(text="Dealer Wins!", size=60, pos=(WINDOW_WIDTH / 2, 70))
-        self.draw = Text(text="Draw!", size=60, pos=(WINDOW_WIDTH / 2, 70))
+        self.draw = Text(text="Push!", size=60, pos=(WINDOW_WIDTH / 2, 70))
 
         # second hidden card
         self.hidden_card = None
