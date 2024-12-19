@@ -1,4 +1,4 @@
-import time
+import time, asyncio
 from game_settings import *
 from sys import exit
 from button import Button, BetButton, HitButton, StandButton, NewGameButton, MenuButton, DoubleButton
@@ -147,7 +147,7 @@ class Game:
                         if not isinstance(card, int):
                             self.dealer_card_rect += 150
                             self.dealer_another_card = Button(button=card, btn_size=(130, 130),
-                                                              btn_rect=(400 + self.dealer_card_rect, 300))
+                                                            btn_rect=(400 + self.dealer_card_rect, 300))
                             self.dealer_new_card_list.append(self.dealer_another_card)
                     self.display_cards.dealer_current_score = self.display_cards.sum_card_values(
                         self.display_cards.dealer_cards)
@@ -308,7 +308,7 @@ class Game:
             # to display user cards on the screen
             self.window.blit(self.display_cards.user_first_card.button, self.display_cards.user_first_card.rect)
             self.window.blit(self.display_cards.user_second_card.button,
-                             self.display_cards.user_second_card.rect)
+                            self.display_cards.user_second_card.rect)
 
             # to display user score on the screen
             self.window.blit(self.display_cards.display_user_score(
@@ -319,10 +319,10 @@ class Game:
 
             # to display dealer card on the screen
             self.window.blit(self.display_cards.dealer_first_card.button,
-                             self.display_cards.dealer_first_card.rect)
+                            self.display_cards.dealer_first_card.rect)
             # to display dealer hidden card on the screen
             self.window.blit(self.display_cards.hidden_card.button,
-                             self.display_cards.hidden_card.rect)
+                            self.display_cards.hidden_card.rect)
 
             # to display dealer score on the screen
             if self.display_cards.allow_first_card:
@@ -357,7 +357,7 @@ class Game:
                     self.game = False
                     self.allow_new_game = False
 
-    def run(self):
+    async def run(self):
         work = True
         while work:
             # display game desk
@@ -432,8 +432,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-
+            await asyncio.sleep(0)
 
 if __name__ == '__main__':
     main = Game()
-    main.run()
+    asyncio.run(main.run())
